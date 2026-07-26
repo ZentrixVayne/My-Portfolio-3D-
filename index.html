@@ -50,6 +50,7 @@
       "imports": {
         "react": "https://esm.sh/react@18.3.1",
         "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+        "react-dom": "https://esm.sh/react-dom@18.3.1",
         "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
         "framer-motion": "https://esm.sh/framer-motion@11.11.17?external=react,react-dom"
       }
@@ -99,7 +100,8 @@
   <script type="text/babel" data-type="module" data-presets="typescript,react">
     import React, { useRef, useEffect, useState } from 'react';
     import { createRoot } from 'react-dom/client';
-    import { motion, useScroll, useTransform } from 'framer-motion';
+    import { createPortal } from 'react-dom';
+    import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
     /* ================================================================
        1. REUSABLE COMPONENTS
@@ -176,22 +178,21 @@
       );
     };
 
-    const ContactButton = ({ className = '' }) => (
-      <a href="mailto:workwitharshman@gmail.com">
-        <button
-          className={`rounded-full font-medium uppercase tracking-widest text-white px-8 py-3 sm:px-10 sm:py-3.5 md:px-12 md:py-4 text-xs sm:text-sm md:text-base transition-transform hover:scale-105 ${className}`}
-          style={{
-            background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
-            boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
-            outline: '2px solid white',
-            outlineOffset: '-3px',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          Contact Me
-        </button>
-      </a>
+    const ContactButton = ({ className = '', onClick }) => (
+      <button
+        onClick={onClick}
+        className={`rounded-full font-medium uppercase tracking-widest text-white px-8 py-3 sm:px-10 sm:py-3.5 md:px-12 md:py-4 text-xs sm:text-sm md:text-base transition-transform hover:scale-105 ${className}`}
+        style={{
+          background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
+          boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
+          outline: '2px solid white',
+          outlineOffset: '-3px',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        Contact Me
+      </button>
     );
 
     const LiveProjectButton = ({ href, className = '' }) => (
@@ -228,6 +229,68 @@
             return <CharacterSpan key={i} char={char} progress={scrollYProgress} start={start} end={end} />;
           })}
         </p>
+      );
+    };
+
+    // NEW: Contact Popup Modal (rendered via Portal to escape overflow:hidden)
+    const ContactModal = ({ isOpen, onClose, email }) => {
+      const [copied, setCopied] = useState(false);
+
+      const handleCopy = () => {
+        navigator.clipboard.writeText(email);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      return createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+              onClick={onClose}
+            >
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: 20 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                className="bg-[#1c1c1c] rounded-3xl p-8 relative max-w-md w-full border border-[#333] shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button 
+                  onClick={onClose} 
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-[#D7E2EA]/60 hover:text-[#D7E2EA] hover:bg-[#333] rounded-full text-2xl transition-colors"
+                  aria-label="Close"
+                >
+                  &times;
+                </button>
+                
+                <h3 className="text-[#D7E2EA] text-2xl font-medium uppercase tracking-wide mb-6 text-center">
+                  Get in Touch
+                </h3>
+                
+                <p className="text-[#D7E2EA]/60 text-center mb-2 text-sm uppercase tracking-widest">Email me at</p>
+                
+                <div className="text-center text-[#B600A8] text-lg font-medium mb-8 break-all">
+                  {email}
+                </div>
+                
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleCopy}
+                    className={`rounded-full font-medium uppercase tracking-widest px-8 py-3 text-sm transition-all duration-300 ${copied ? 'bg-green-500 text-white' : 'border-2 border-[#D7E2EA] text-[#D7E2EA] hover:bg-[#D7E2EA]/10'}`}
+                  >
+                    {copied ? 'Copied!' : 'Copy Email'}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       );
     };
 
@@ -281,8 +344,7 @@
        3. SECTIONS
     ================================================================= */
 
-    const HeroSection = () => {
-      // Updated to only have About, Projects, Contact
+    const HeroSection = ({ onContactClick }) => {
       const navLinks = ['About', 'Projects', 'Contact'];
       
       return (
@@ -291,11 +353,21 @@
           <FadeIn as="nav" delay={0} y={-20} className="flex justify-between items-center px-6 md:px-10 pt-6 md:pt-8 w-full relative z-30 flex-shrink-0">
             {navLinks.map((link, i) => {
               const isContact = link.toLowerCase() === 'contact';
+              if (isContact) {
+                return (
+                  <button
+                    key={i}
+                    onClick={onContactClick}
+                    className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer bg-transparent border-none p-0"
+                  >
+                    {link}
+                  </button>
+                );
+              }
               return (
-                <a 
-                  key={i} 
-                  href={isContact ? undefined : `#${link.toLowerCase()}`} 
-                  onClick={isContact ? (e) => e.preventDefault() : undefined}
+                <a
+                  key={i}
+                  href={`#${link.toLowerCase()}`}
                   className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer"
                 >
                   {link}
@@ -337,7 +409,7 @@
               </p>
             </FadeIn>
             <FadeIn delay={0.5} y={20}>
-              <ContactButton />
+              <ContactButton onClick={onContactClick} />
             </FadeIn>
           </div>
         </section>
@@ -381,7 +453,7 @@
       );
     };
 
-    const AboutSection = () => {
+    const AboutSection = ({ onContactClick }) => {
       const aboutText = "Hi, I'm Arshman Anil, a passionate developer from Karachi, Pakistan. I specialize in Python, C++, JavaScript, React, and software design. I enjoy building real-world projects and creating tools like PyCJ to help beginners learn programming. Let's build something incredible together!";
       return (
         <section id="about" className="min-h-screen flex flex-col items-center justify-center relative px-5 sm:px-8 md:px-10 py-20 w-full" style={{ overflowX: 'clip' }}>
@@ -409,7 +481,7 @@
 
           <div className="mt-16 sm:mt-20 md:mt-24 relative z-10">
             <FadeIn delay={0.2} y={30}>
-              <ContactButton />
+              <ContactButton onClick={onContactClick} />
             </FadeIn>
           </div>
         </section>
@@ -510,6 +582,8 @@
     ================================================================= */
 
     const App = () => {
+      const [isModalOpen, setIsModalOpen] = useState(false);
+
       // Force scroll to top on page load/refresh
       useEffect(() => {
         window.history.scrollRestoration = 'manual';
@@ -518,11 +592,18 @@
 
       return (
         <div style={{ overflowX: 'clip', backgroundColor: '#0C0C0C', minHeight: '100vh', fontFamily: "'Kanit', sans-serif" }}>
-          <HeroSection />
+          <HeroSection onContactClick={() => setIsModalOpen(true)} />
           <MarqueeSection />
-          <AboutSection />
+          <AboutSection onContactClick={() => setIsModalOpen(true)} />
           <ServicesSection />
           <ProjectsSection />
+          
+          {/* Render the Contact Popup Modal via Portal */}
+          <ContactModal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)} 
+            email="workwitharshman@gmail.com" 
+          />
         </div>
       );
     };
