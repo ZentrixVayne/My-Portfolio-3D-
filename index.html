@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- FIX 1: This sets your logo.png as the browser tab icon (removes the 404 & world logo) -->
+  <!-- FIX: This sets your logo.png as the browser tab icon (removes the 404 & world logo) -->
   <link rel="icon" type="image/png" href="/logo.png" />
   
   <title>Arshman -- 3D Creator</title>
 
-  <!-- FIX 2: Suppress Tailwind & Babel console warnings BEFORE they load -->
+  <!-- FIX: Suppress Tailwind & Babel console warnings BEFORE they load -->
   <script>
     (function() {
       const origWarn = window.console.warn;
@@ -275,8 +275,8 @@
       const navLinks = ['About', 'Price', 'Projects', 'Contact'];
       return (
         <section className="h-screen flex flex-col relative w-full" style={{ overflowX: 'clip' }}>
-          {/* Navbar */}
-          <FadeIn as="nav" delay={0} y={-20} className="flex justify-between items-center px-6 md:px-10 pt-6 md:pt-8 w-full">
+          {/* Navbar - z-30 ensures it stays visually above the head */}
+          <FadeIn as="nav" delay={0} y={-20} className="flex justify-between items-center px-6 md:px-10 pt-6 md:pt-8 w-full relative z-30">
             {navLinks.map((link, i) => (
               <a key={i} href={`#${link.toLowerCase()}`} className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200">
                 {link}
@@ -297,21 +297,21 @@
             </FadeIn>
           </div>
 
-          {/* Hero Portrait - Absolute path /logo.png for Vercel server */}
+          {/* Hero Portrait - pointer-events-none allows clicks to pass THROUGH the head to the navbar! */}
           <div className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 w-full flex justify-center pointer-events-none">
-            <FadeIn delay={0.6} y={30} className="pointer-events-auto">
-              <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
+            <FadeIn delay={0.6} y={30}>
+              <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out" className="pointer-events-none">
                 <img 
                   src="/logo.png" 
                   alt="Arshman" 
-                  className="w-[60vw] max-w-[280px] sm:w-[50vw] sm:max-w-[360px] md:w-[440px] lg:w-[520px] object-contain" 
+                  className="w-[60vw] max-w-[280px] sm:w-[50vw] sm:max-w-[360px] md:w-[440px] lg:w-[520px] object-contain pointer-events-none" 
                 />
               </Magnet>
             </FadeIn>
           </div>
 
           {/* Bottom Bar */}
-          <div className="flex justify-between items-end pb-7 sm:pb-8 md:pb-10 px-6 md:px-10 relative z-20 gap-4">
+          <div className="flex justify-between items-end pb-7 sm:pb-8 md:pb-10 px-6 md:px-10 relative z-30 gap-4">
             <FadeIn delay={0.35} y={20} className="flex-1">
               <p className="text-[#D7E2EA] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[260px]" style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}>
                 a 3d creator driven by crafting striking and unforgettable projects
