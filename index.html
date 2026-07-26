@@ -3,7 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- FIX 1: This sets your logo.png as the browser tab icon (removes the 404 & world logo) -->
+  <link rel="icon" type="image/png" href="/logo.png" />
+  
   <title>Arshman -- 3D Creator</title>
+
+  <!-- FIX 2: Suppress Tailwind & Babel console warnings BEFORE they load -->
+  <script>
+    (function() {
+      const origWarn = window.console.warn;
+      window.console.warn = function(...args) {
+        if (typeof args[0] === 'string' && (args[0].includes('cdn.tailwindcss.com') || args[0].includes('in-browser Babel'))) {
+          return;
+        }
+        origWarn(...args);
+      };
+    })();
+  </script>
 
   <!-- Google Fonts (Kanit) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,15 +30,6 @@
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Suppress Tailwind & Babel CDN console warnings for clean console
-    window.console.warn = (() => {
-      const orig = window.console.warn;
-      return (...args) => {
-        if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com')) return;
-        if (typeof args[0] === 'string' && args[0].includes('in-browser Babel transformer')) return;
-        orig(...args);
-      };
-    })();
     tailwind.config = {
       theme: {
         extend: {
@@ -289,12 +297,12 @@
             </FadeIn>
           </div>
 
-          {/* Hero Portrait */}
+          {/* Hero Portrait - Absolute path /logo.png for Vercel server */}
           <div className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 w-full flex justify-center pointer-events-none">
             <FadeIn delay={0.6} y={30} className="pointer-events-auto">
               <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
                 <img 
-                  src="./logo.png" 
+                  src="/logo.png" 
                   alt="Arshman" 
                   className="w-[60vw] max-w-[280px] sm:w-[50vw] sm:max-w-[360px] md:w-[440px] lg:w-[520px] object-contain" 
                 />
