@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- FIX: This sets your logo.png as the browser tab icon (removes the 404 & world logo) -->
+  <!-- Sets your logo.png as the browser tab icon -->
   <link rel="icon" type="image/png" href="/logo.png" />
   
-  <title>Arshman -- 3D Creator</title>
+  <title>Arshman Anil -- Full-Stack Developer</title>
 
-  <!-- FIX: Suppress Tailwind & Babel console warnings BEFORE they load -->
+  <!-- Suppress Tailwind & Babel console warnings -->
   <script>
     (function() {
       const origWarn = window.console.warn;
@@ -174,25 +174,29 @@
     };
 
     const ContactButton = ({ className = '' }) => (
-      <button
-        className={`rounded-full font-medium uppercase tracking-widest text-white px-8 py-3 sm:px-10 sm:py-3.5 md:px-12 md:py-4 text-xs sm:text-sm md:text-base transition-transform hover:scale-105 ${className}`}
-        style={{
-          background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
-          boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
-          outline: '2px solid white',
-          outlineOffset: '-3px',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        Contact Me
-      </button>
+      <a href="mailto:workwitharshman@gmail.com">
+        <button
+          className={`rounded-full font-medium uppercase tracking-widest text-white px-8 py-3 sm:px-10 sm:py-3.5 md:px-12 md:py-4 text-xs sm:text-sm md:text-base transition-transform hover:scale-105 ${className}`}
+          style={{
+            background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
+            boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
+            outline: '2px solid white',
+            outlineOffset: '-3px',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          Contact Me
+        </button>
+      </a>
     );
 
-    const LiveProjectButton = ({ className = '' }) => (
-      <button className={`rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition-colors whitespace-nowrap ${className}`}>
-        Live Project
-      </button>
+    const LiveProjectButton = ({ href, className = '' }) => (
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        <button className={`rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition-colors whitespace-nowrap ${className}`}>
+          Live Project
+        </button>
+      </a>
     );
 
     const CharacterSpan = ({ char, progress, start, end }) => {
@@ -233,36 +237,39 @@
     ];
 
     const services = [
-      { number: '01', name: '3D Modeling', description: 'Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations.' },
-      { number: '02', name: 'Rendering', description: 'High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life.' },
-      { number: '03', name: 'Motion Design', description: 'Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences.' },
-      { number: '04', name: 'Branding', description: 'Crafting cohesive visual identities — from logos to full brand systems — that communicate a clear and memorable presence.' },
-      { number: '05', name: 'Web Design', description: 'Designing clean, modern, and conversion-focused websites with attention to layout, typography, and user experience.' },
+      { number: '01', name: 'Web Development', description: 'Building modern, responsive, and high-performance websites using HTML, CSS, JavaScript, React, and modern web technologies.' },
+      { number: '02', name: 'Python Development', description: 'Creating automation scripts, utilities, desktop tools, and custom Python applications tailored to your specific needs.' },
+      { number: '03', name: 'Frontend Development', description: 'Developing attractive and responsive user interfaces with a strong focus on performance and user experience.' },
+      { number: '04', name: 'Portfolio Design', description: 'Designing professional portfolios for students, developers, freelancers, and creators to showcase their work.' },
+      { number: '05', name: 'Consultation', description: 'Helping beginners learn programming concepts, project architecture, debugging, and software development practices.' },
     ];
 
     const projects = [
       {
-        number: '01', category: 'Client', name: 'Nextlevel Studio',
+        number: '01', category: 'Web App', name: 'PyCJ Compiler',
+        link: 'https://pycjcompiler.netlify.app',
         images: {
-          col1img1: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85',
-          col1img2: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85',
-          col2img: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327.png&w=1280&q=85',
+          col1img1: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop',
+          col1img2: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1000&auto=format&fit=crop',
+          col2img: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?q=80&w=1000&auto=format&fit=crop',
         },
       },
       {
-        number: '02', category: 'Personal', name: 'Aura Brand Identity',
+        number: '02', category: 'Platform', name: 'PyCJ Documentation',
+        link: 'https://pycjdocumentation.netlify.app',
         images: {
-          col1img1: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85',
-          col1img2: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
-          col2img: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea.png&w=1280&q=85',
+          col1img1: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop',
+          col1img2: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop',
+          col2img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000&auto=format&fit=crop',
         },
       },
       {
-        number: '03', category: 'Client', name: 'Solaris Digital',
+        number: '03', category: 'AI Assistant', name: 'PyCJ AI',
+        link: 'https://pycjai.netlify.app',
         images: {
-          col1img1: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85',
-          col1img2: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85',
-          col2img: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee.png&w=1280&q=85',
+          col1img1: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop',
+          col1img2: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=1000&auto=format&fit=crop',
+          col2img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop',
         },
       },
     ];
@@ -275,7 +282,7 @@
       const navLinks = ['About', 'Price', 'Projects', 'Contact'];
       return (
         <section className="h-screen flex flex-col relative w-full" style={{ overflowX: 'clip' }}>
-          {/* Navbar - z-30 ensures it stays visually above the head */}
+          {/* Navbar */}
           <FadeIn as="nav" delay={0} y={-20} className="flex justify-between items-center px-6 md:px-10 pt-6 md:pt-8 w-full relative z-30">
             {navLinks.map((link, i) => (
               <a key={i} href={`#${link.toLowerCase()}`} className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200">
@@ -292,18 +299,18 @@
                 style={{ fontSize: 'clamp(3rem, 14vw, 220px)' }}
               >
                 <span className="block">Hi, i&apos;m</span>
-                <span className="block">arshman</span>
+                <span className="block">arshman anil</span>
               </h1>
             </FadeIn>
           </div>
 
-          {/* Hero Portrait - pointer-events-none allows clicks to pass THROUGH the head to the navbar! */}
+          {/* Hero Portrait */}
           <div className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 w-full flex justify-center pointer-events-none">
             <FadeIn delay={0.6} y={30}>
               <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out" className="pointer-events-none">
                 <img 
                   src="/logo.png" 
-                  alt="Arshman" 
+                  alt="Arshman Anil" 
                   className="w-[60vw] max-w-[280px] sm:w-[50vw] sm:max-w-[360px] md:w-[440px] lg:w-[520px] object-contain pointer-events-none" 
                 />
               </Magnet>
@@ -314,7 +321,7 @@
           <div className="flex justify-between items-end pb-7 sm:pb-8 md:pb-10 px-6 md:px-10 relative z-30 gap-4">
             <FadeIn delay={0.35} y={20} className="flex-1">
               <p className="text-[#D7E2EA] font-light uppercase tracking-wide leading-snug max-w-[160px] sm:max-w-[220px] md:max-w-[260px]" style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}>
-                a 3d creator driven by crafting striking and unforgettable projects
+                a full-stack developer driven by crafting innovative web apps and tools
               </p>
             </FadeIn>
             <FadeIn delay={0.5} y={20}>
@@ -363,7 +370,7 @@
     };
 
     const AboutSection = () => {
-      const aboutText = "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!";
+      const aboutText = "Hi, I'm Arshman Anil, a passionate developer from Karachi, Pakistan. I specialize in Python, C++, JavaScript, React, and software design. I enjoy building real-world projects and creating tools like PyCJ to help beginners learn programming. Let's build something incredible together!";
       return (
         <section className="min-h-screen flex flex-col items-center justify-center relative px-5 sm:px-8 md:px-10 py-20 w-full" style={{ overflowX: 'clip' }}>
           <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute top-[4%] left-[1%] sm:left-[2%] md:left-[4%] z-0 pointer-events-none">
@@ -451,7 +458,7 @@
                   </h3>
                 </div>
               </div>
-              <LiveProjectButton className="flex-shrink-0 !text-[10px] !px-4 !py-2 sm:!text-sm sm:!px-8 sm:!py-3 md:!px-10 md:!py-3.5 md:!text-base" />
+              <LiveProjectButton href={project.link} className="flex-shrink-0 !text-[10px] !px-4 !py-2 sm:!text-sm sm:!px-8 sm:!py-3 md:!px-10 md:!py-3.5 md:!text-base" />
             </div>
             <div className="flex gap-3 sm:gap-4 md:gap-6 flex-1 min-h-0">
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-6 w-[40%]">
