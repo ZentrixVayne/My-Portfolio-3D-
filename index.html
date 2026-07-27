@@ -289,7 +289,7 @@
     .marquee-row {
       display: flex;
       gap: 12px;
-      will-change: transform; /* Optimizes scroll animation */
+      will-change: transform;
     }
 
     .marquee-card {
@@ -394,7 +394,7 @@
     );
 
     /* ================================================================
-       2. UI ADDONS (Cursor, Scroll Bar) - OPTIMIZED
+       2. UI ADDONS (Cursor, Scroll Bar)
     ================================================================= */
     const CustomCursor = () => {
       const dotRef = useRef(null);
@@ -444,7 +444,7 @@
     };
 
     /* ================================================================
-       3. REUSABLE COMPONENTS - OPTIMIZED
+       3. REUSABLE COMPONENTS
     ================================================================= */
 
     const FadeIn = ({ 
@@ -473,7 +473,6 @@
       );
     };
 
-    // OPTIMIZED: Uses direct DOM manipulation instead of React state for mousemove
     const Magnet = ({ 
       children, 
       padding = 100, 
@@ -527,7 +526,6 @@
       );
     };
 
-    // Bottom Contact Button (Uses the Uiverse style)
     const ContactButton = ({ className = '', onClick }) => (
       <button
         onClick={onClick}
@@ -626,7 +624,6 @@
       );
     };
 
-    // Contact Popup Modal with EmailJS Form
     const ContactModal = ({ isOpen, onClose }) => {
       const [status, setStatus] = useState('idle');
       const formRef = useRef(null);
@@ -675,7 +672,7 @@
               >
                 <ContactCard
                   title="Let's Work Together"
-                  description="Have a project in mind or need a consultation? Fill out the form, and I'll get back to you within 24 hours."
+                  description="Have A Project In Mind Or Need A Consultation? Fill Out The Form, And I'll Get Back To You Within 24 Hours."
                   contactInfo={[
                     {
                       icon: MailIcon,
@@ -688,7 +685,7 @@
                     <div className="text-center py-10 w-full">
                       <div className="text-green-500 text-5xl mb-4">✓</div>
                       <p className="text-[#D7E2EA] text-xl font-medium">Message Sent!</p>
-                      <p className="text-[#D7E2EA]/60 mt-2">I will get back to you shortly.</p>
+                      <p className="text-[#D7E2EA]/60 mt-2">I Will Get Back To You Shortly.</p>
                     </div>
                   ) : (
                     <form ref={formRef} onSubmit={handleSubmit} className="w-full space-y-4">
@@ -724,7 +721,7 @@
                       </div>
 
                       {status === 'error' && (
-                        <p className="text-red-500 text-sm text-center">Failed to send. Please try again.</p>
+                        <p className="text-red-500 text-sm text-center">Failed To Send. Please Try Again.</p>
                       )}
 
                       <button 
@@ -745,9 +742,6 @@
       );
     };
 
-    // ================================================================
-    // EMAIL COPY POPUP MODAL (From Uiverse.io)
-    // ================================================================
     const EmailCopyModal = ({ isOpen, onClose, email }) => {
       const [copied, setCopied] = useState(false);
 
@@ -811,7 +805,7 @@
                 </div>
 
                 {copied && (
-                  <p className="text-[#39bda7] text-sm text-center mt-4">Copied to clipboard!</p>
+                  <p className="text-[#39bda7] text-sm text-center mt-4">Copied To Clipboard!</p>
                 )}
               </motion.div>
             </motion.div>
@@ -821,16 +815,13 @@
       );
     };
 
-    // ================================================================
-    // REDIRECT POPUP MODAL (From Uiverse.io)
-    // ================================================================
     const RedirectModal = ({ isOpen, url, onClose }) => {
       useEffect(() => {
         if (isOpen && url) {
           const timer = setTimeout(() => {
             window.open(url, '_blank', 'noopener,noreferrer');
             onClose();
-          }, 2000); // 2 seconds
+          }, 2000);
           return () => clearTimeout(timer);
         }
       }, [isOpen, url, onClose]);
@@ -863,12 +854,13 @@
       'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif', 'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif', 'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif', 'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif', 'https://motionsites.ai/assets/hero-asme-preview-B_nGDnTP.gif', 'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif', 'https://motionsites.ai/assets/hero-vitara-preview-Cjz2QYyU.gif', 'https://motionsites.ai/assets/hero-terra-preview-BFjrCr7T.gif', 'https://motionsites.ai/assets/hero-skyelite-preview-DHaZIgUv.gif', 'https://motionsites.ai/assets/hero-aethera-preview-DknSlcTa.gif', 'https://motionsites.ai/assets/hero-designpro-preview-D8c5_een.gif', 'https://motionsites.ai/assets/hero-stellar-ai-preview-D3HL6bw1.gif', 'https://motionsites.ai/assets/hero-xportfolio-preview-D4A8maiC.gif', 'https://motionsites.ai/assets/hero-orbit-web3-preview-BXt4OttD.gif', 'https://motionsites.ai/assets/hero-nexora-preview-cx5HmUgo.gif', 'https://motionsites.ai/assets/hero-evr-ventures-preview-DZxeVFEX.gif', 'https://motionsites.ai/assets/hero-planet-orbit-preview-DWAP8Z1P.gif', 'https://motionsites.ai/assets/hero-new-era-preview-CocuDUm9.gif', 'https://motionsites.ai/assets/hero-wealth-preview-B70idl_u.gif', 'https://motionsites.ai/assets/hero-luminex-preview-CxOP7ce6.gif', 'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif',
     ];
 
+    // UPDATED: Replaced Python Development with C++ Development & Capitalized Every Word
     const services = [
-      { number: '01', name: 'Web Development', description: 'Building modern, responsive, and high-performance websites using HTML, CSS, JavaScript, React, and modern web technologies.' },
-      { number: '02', name: 'Python Development', description: 'Creating automation scripts, utilities, desktop tools, and custom Python applications tailored to your specific needs.' },
-      { number: '03', name: 'Frontend Development', description: 'Developing attractive and responsive user interfaces with a strong focus on performance and user experience.' },
-      { number: '04', name: 'Portfolio Design', description: 'Designing professional portfolios for students, developers, freelancers, and creators to showcase their work.' },
-      { number: '05', name: 'Consultation', description: 'Helping beginners learn programming concepts, project architecture, debugging, and software development practices.' },
+      { number: '01', name: 'Web Development', description: 'Building Modern, Responsive, And High-Performance Websites Using HTML, CSS, JavaScript, React, And Modern Web Technologies.' },
+      { number: '02', name: 'C++ Development', description: 'Creating High-Performance Applications, System Utilities, And Custom C++ Solutions Tailored To Your Specific Needs.' },
+      { number: '03', name: 'Frontend Development', description: 'Developing Attractive And Responsive User Interfaces With A Strong Focus On Performance And User Experience.' },
+      { number: '04', name: 'Portfolio Design', description: 'Designing Professional Portfolios For Students, Developers, Freelancers, And Creators To Showcase Their Work.' },
+      { number: '05', name: 'Consultation', description: 'Helping Beginners Learn Programming Concepts, Project Architecture, Debugging, And Software Development Practices.' },
     ];
 
     const projects = [
@@ -955,8 +947,9 @@
           {/* Bottom Bar */}
           <div className="flex justify-between items-end pb-7 sm:pb-8 md:pb-10 px-6 md:px-10 relative z-30 gap-4 flex-shrink-0">
             <FadeIn delay={0.35} y={20} className="flex-1">
+              {/* UPDATED: Capitalized Every Word */}
               <p className="text-[#D7E2EA] font-light uppercase tracking-wide leading-snug max-w-[180px] sm:max-w-[260px] md:max-w-[300px]" style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}>
-                a full-stack developer driven by crafting innovative web apps and tools
+                A Full-Stack Developer Driven By Crafting Innovative Web Apps And Tools
               </p>
             </FadeIn>
             <FadeIn delay={0.5} y={20}>
@@ -994,7 +987,7 @@
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll(); // Initial call
+        handleScroll(); 
         
         return () => {
           window.removeEventListener('scroll', handleScroll);
@@ -1028,7 +1021,8 @@
     };
 
     const AboutSection = ({ onContactClick }) => {
-      const aboutText = "Hi, I'm Arshman Anil, a passionate developer from Karachi, Pakistan. I specialize in Python, C++, JavaScript, React, and software design. I enjoy building real-world projects and creating tools like PyCJ to help beginners learn programming. Let's build something incredible together!";
+      // UPDATED: Capitalized Every Word
+      const aboutText = "Hi, I'm Arshman Anil, A Passionate Developer From Karachi, Pakistan. I Specialize In Python, C++, JavaScript, React, And Software Design. I Enjoy Building Real-World Projects And Creating Tools Like PyCJ To Help Beginners Learn Programming. Let's Build Something Incredible Together!";
       return (
         <section id="about" className="min-h-screen flex flex-col items-center justify-center relative px-5 sm:px-8 md:px-10 py-20 w-full" style={{ overflowX: 'clip' }}>
           <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute top-[4%] left-[1%] sm:left-[2%] md:left-[4%] z-0 pointer-events-none">
@@ -1157,8 +1151,9 @@
     const Footer = ({ onEmailClick, onGithubClick }) => (
       <footer className="bg-[#0C0C0C] pt-20 pb-10 px-6 md:px-10 border-t border-[#1c1c1c] relative z-10 w-full text-center">
         <FadeIn delay={0} y={30}>
+          {/* UPDATED: Capitalized Every Word */}
           <h2 className="hero-heading text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tight mb-8">
-            Let's build something incredible together
+            Let's Build Something Incredible Together
           </h2>
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 justify-center items-center mb-16">
             <button
@@ -1175,7 +1170,7 @@
             </button>
           </div>
           <p className="text-[#D7E2EA]/40 text-xs uppercase tracking-widest">
-            © {new Date().getFullYear()} Arshman Anil. All rights reserved.
+            © {new Date().getFullYear()} Arshman Anil. All Rights Reserved.
           </p>
         </FadeIn>
       </footer>
@@ -1192,25 +1187,19 @@
       const [redirectUrl, setRedirectUrl] = useState("");
       const [isLoading, setIsLoading] = useState(true);
 
-      // Handle Loading Screen Timer
       useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 2500); // 2.5 seconds
+        const timer = setTimeout(() => setIsLoading(false), 2500);
         return () => clearTimeout(timer);
       }, []);
 
-      // Handle initial load and scroll restoration
       useEffect(() => {
         window.history.scrollRestoration = 'manual';
-        
-        // Clean up any old hashes from previous versions
         if (window.location.hash) {
           window.history.replaceState(null, '', window.location.pathname);
         }
-        
         window.scrollTo(0, 0);
       }, []);
 
-      // Handle dynamic URL updating (Clean URLs instead of #)
       useEffect(() => {
         const sectionIds = ['home', 'about', 'projects'];
         const observer = new IntersectionObserver((entries) => {
@@ -1218,8 +1207,6 @@
             if (entry.isIntersecting) {
               const id = entry.target.getAttribute('id');
               const path = id === 'home' ? '/' : `/${id}`;
-              
-              // Update URL if it changed
               if (window.location.pathname !== path) {
                 window.history.replaceState(null, '', path);
               }
@@ -1235,7 +1222,6 @@
         return () => observer.disconnect();
       }, []);
 
-      // Handle manual Nav Clicks to smooth scroll
       const handleNavClick = (e, id) => {
         e.preventDefault();
         const el = document.getElementById(id);
@@ -1244,7 +1230,6 @@
         }
       };
 
-      // Handle GitHub Redirect
       const handleGithubRedirect = () => {
         setRedirectUrl('https://github.com/ZentrixVayne');
         setIsRedirecting(true);
@@ -1267,20 +1252,17 @@
             <ProjectsSection />
             <Footer onEmailClick={() => setIsEmailModalOpen(true)} onGithubClick={handleGithubRedirect} />
             
-            {/* Render the Contact Form Modal via Portal */}
             <ContactModal 
               isOpen={isModalOpen} 
               onClose={() => setIsModalOpen(false)} 
             />
 
-            {/* Render the Email Copy Modal via Portal */}
             <EmailCopyModal 
               isOpen={isEmailModalOpen} 
               onClose={() => setIsEmailModalOpen(false)} 
               email="workwitharshman@gmail.com"
             />
 
-            {/* Render the Redirect Modal via Portal */}
             <RedirectModal 
               isOpen={isRedirecting} 
               url={redirectUrl} 
