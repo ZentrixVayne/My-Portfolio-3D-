@@ -87,6 +87,15 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .project-card-wrapper {
+      position: sticky;
+      top: calc(6rem + var(--card-offset, 0px));
+    }
+    @media (min-width: 768px) {
+      .project-card-wrapper {
+        top: calc(8rem + var(--card-offset, 0px));
+      }
+    }
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #0c0c0c; }
     ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -319,81 +328,6 @@
       100% { left: 50%; }
       0% { left: 0%; }
     }
-
-    /* ================================================================
-       PROJECTS HOVER BLUR EFFECT (Adapted from Uiverse.io by kamehame-ha)
-    ================================================================= */
-    .projects-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-    }
-
-    .projects-grid .grid-card {
-      position: relative;
-      height: 300px;
-      width: 100%;
-      max-width: 350px;
-      border-radius: 16px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: 400ms ease;
-      border: 1px solid #333;
-    }
-
-    @media (min-width: 640px) {
-      .projects-grid .grid-card {
-        width: calc(50% - 15px);
-      }
-    }
-    @media (min-width: 1024px) {
-      .projects-grid .grid-card {
-        width: calc(33.33% - 15px);
-      }
-    }
-
-    .projects-grid .grid-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 400ms ease;
-    }
-
-    .projects-grid .grid-card .card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0) 100%);
-      display: flex;
-      align-items: flex-end;
-      padding: 20px;
-    }
-
-    .projects-grid .grid-card .card-text {
-      color: white;
-      font-family: 'Kanit', sans-serif;
-      font-weight: 700;
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      line-height: 1.3;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    }
-
-    .projects-grid .grid-card:hover {
-      transform: scale(1.05, 1.05);
-      z-index: 20;
-      border-color: #39bda7;
-    }
-
-    .projects-grid .grid-card:hover img {
-      transform: scale(1.1);
-    }
-
-    .projects-grid:hover > .grid-card:not(:hover) {
-      filter: blur(10px);
-      transform: scale(0.95, 0.95);
-      opacity: 0.5;
-    }
   </style>
 </head>
 <body>
@@ -445,7 +379,7 @@
         };
 
         const mouseOver = (e) => {
-          if (e.target.closest('a, button, .custom-contact-btn, .grid-card')) {
+          if (e.target.closest('a, button, .custom-contact-btn')) {
             outlineRef.current?.classList.add('cursor-hover');
           } else {
             outlineRef.current?.classList.remove('cursor-hover');
@@ -558,6 +492,14 @@
       >
         <span style={{ position: 'relative', zIndex: 2 }}>Contact Me</span>
       </button>
+    );
+
+    const LiveProjectButton = ({ href, className = '' }) => (
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        <button className={`rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition-colors whitespace-nowrap ${className}`}>
+          Live Project
+        </button>
+      </a>
     );
 
     const CharacterSpan = ({ char, progress, start, end }) => {
@@ -886,13 +828,34 @@
       { number: '05', name: 'Consultation', description: 'Helping beginners learn programming concepts, project architecture, debugging, and software development practices.' },
     ];
 
-    const projectCards = [
-      { img: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?q=80&w=1000&auto=format&fit=crop', text: 'Venture Past Our Sky Across the Universe' },
-      { img: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop', text: 'Launch Your Coding Career.' },
-      { img: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=1000&auto=format&fit=crop', text: 'Shaping tomorrow with vision and action.' },
-      { img: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop', text: 'Work Smarter. Move Faster. AI Powers You Up.' },
-      { img: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1000&auto=format&fit=crop', text: 'Building Brands That Resonate' },
-      { img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a723623?q=80&w=1000&auto=format&fit=crop', text: 'Own the future of your assets.' },
+    const projects = [
+      {
+        number: '01', category: 'Web App', name: 'PyCJ Compiler',
+        link: 'https://pycjcompiler.vercel.app/',
+        images: {
+          col1img1: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop',
+          col1img2: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1000&auto=format&fit=crop',
+          col2img: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?q=80&w=1000&auto=format&fit=crop',
+        },
+      },
+      {
+        number: '02', category: 'Platform', name: 'PyCJ Docs',
+        link: 'https://pycjdocumentation.vercel.app/',
+        images: {
+          col1img1: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop',
+          col1img2: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop',
+          col2img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000&auto=format&fit=crop',
+        },
+      },
+      {
+        number: '03', category: 'AI Assistant', name: 'PyCJ AI',
+        link: 'https://pycjai.vercel.app/',
+        images: {
+          col1img1: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop',
+          col1img2: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=1000&auto=format&fit=crop',
+          col2img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1000&auto=format&fit=crop',
+        },
+      },
     ];
 
     /* ================================================================
@@ -1064,29 +1027,59 @@
       );
     };
 
-    // ================================================================
-    // PROJECTS SECTION (6 Grid Cards with Blur Hover)
-    // ================================================================
+    const ProjectCard = ({ project, index, total }) => {
+      const ref = useRef(null);
+      const targetScale = 1 - (total - 1 - index) * 0.03;
+      const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+      const scale = useTransform(scrollYProgress, [0, 1], [1, targetScale]);
+
+      return (
+        <div ref={ref} className="h-[85vh] project-card-wrapper flex justify-center" style={{ '--card-offset': `${index * 28}px` }}>
+          <motion.div style={{ scale }} className="w-full h-full rounded-[30px] sm:rounded-[40px] md:rounded-[60px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:p-6 md:p-8 flex flex-col overflow-hidden">
+            <div className="flex items-start justify-between gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
+              <div className="flex items-start gap-3 sm:gap-6 md:gap-8 flex-1 min-w-0">
+                <span className="hero-heading font-black leading-none flex-shrink-0" style={{ fontSize: 'clamp(2.5rem, 8vw, 140px)' }}>
+                  {project.number}
+                </span>
+                <div className="flex flex-col gap-1 pt-1 sm:pt-4 md:pt-6 min-w-0">
+                  <span className="text-[#D7E2EA]/60 font-medium uppercase tracking-widest text-[10px] sm:text-sm md:text-base">
+                    {project.category}
+                  </span>
+                  <h3 className="text-[#D7E2EA] font-medium uppercase leading-tight" style={{ fontSize: 'clamp(0.9rem, 2vw, 2.1rem)' }}>
+                    {project.name}
+                  </h3>
+                </div>
+              </div>
+              <LiveProjectButton href={project.link} className="flex-shrink-0 !text-[10px] !px-4 !py-2 sm:!text-sm sm:!px-8 sm:!py-3 md:!px-10 md:!py-3.5 md:!text-base" />
+            </div>
+            <div className="flex gap-3 sm:gap-4 md:gap-6 flex-1 min-h-0">
+              <div className="flex flex-col gap-3 sm:gap-4 md:gap-6 w-[40%]">
+                <img src={project.images.col1img1} alt="" className="w-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover flex-shrink-0" style={{ height: 'clamp(130px, 16vw, 230px)' }} loading="lazy" />
+                <img src={project.images.col1img2} alt="" className="w-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover flex-1 min-h-0" style={{ minHeight: 'clamp(160px, 22vw, 340px)' }} loading="lazy" />
+              </div>
+              <div className="w-[60%]">
+                <img src={project.images.col2img} alt="" className="w-full h-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover" loading="lazy" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      );
+    };
+
     const ProjectsSection = () => {
       return (
-        <section id="projects" className="bg-[#0C0C0C] py-20 sm:py-24 md:py-32 relative z-10 w-full">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8 md:px-10">
+        <section id="projects" className="bg-[#0C0C0C] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 z-10 relative w-full">
+          <div className="px-5 sm:px-8 md:px-10 pt-20 sm:pt-24 md:pt-32 pb-40 sm:pb-48 md:pb-56">
             <FadeIn delay={0} y={40}>
-              <h2 className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-16 sm:mb-20 md:mb-28" style={{ fontSize: 'clamp(2.5rem, 12vw, 160px)' }}>
+              <h2 className="hero-heading font-black uppercase leading-none tracking-tight text-center" style={{ fontSize: 'clamp(2.5rem, 12vw, 160px)' }}>
                 Project
               </h2>
             </FadeIn>
-            
-            <FadeIn delay={0.1} y={30} className="projects-grid">
-              {projectCards.map((card, i) => (
-                <div key={i} className="grid-card">
-                  <img src={card.img} alt={card.text} loading="lazy" />
-                  <div className="card-overlay">
-                    <p className="card-text">{card.text}</p>
-                  </div>
-                </div>
+            <div className="mt-16 sm:mt-20 md:mt-28 max-w-6xl mx-auto">
+              {projects.map((project, index) => (
+                <ProjectCard key={index} project={project} index={index} total={projects.length} />
               ))}
-            </FadeIn>
+            </div>
           </div>
         </section>
       );
