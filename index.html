@@ -328,6 +328,60 @@
       100% { left: 50%; }
       0% { left: 0%; }
     }
+
+    /* ================================================================
+       SKILLS CARDS (Adapted from Uiverse.io by kamehame-ha)
+    ================================================================= */
+    .skills-cards {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .skills-cards .skill-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      height: 280px;
+      width: 300px;
+      border-radius: 16px;
+      color: white;
+      cursor: pointer;
+      transition: 400ms;
+      background-color: #111;
+      border: 1px solid #333;
+      padding: 20px;
+    }
+
+    .skills-cards .skill-card p.tip {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #39bda7;
+      text-transform: uppercase;
+    }
+
+    .skills-cards .skill-card p.second-text {
+      font-size: 0.9em;
+      color: #D7E2EA;
+      line-height: 1.5;
+    }
+
+    .skills-cards .skill-card:hover {
+      transform: scale(1.05, 1.05);
+      border-color: #39bda7;
+      background-color: #0C0C0C;
+    }
+
+    .skills-cards:hover > .skill-card:not(:hover) {
+      filter: blur(10px);
+      transform: scale(0.95, 0.95);
+      opacity: 0.5;
+    }
   </style>
 </head>
 <body>
@@ -379,7 +433,7 @@
         };
 
         const mouseOver = (e) => {
-          if (e.target.closest('a, button, .custom-contact-btn')) {
+          if (e.target.closest('a, button, .custom-contact-btn, .skill-card')) {
             outlineRef.current?.classList.add('cursor-hover');
           } else {
             outlineRef.current?.classList.remove('cursor-hover');
@@ -1085,6 +1139,38 @@
       );
     };
 
+    // ================================================================
+    // SKILLS SECTION (3D Blur Cards)
+    // ================================================================
+    const SkillsSection = () => {
+      return (
+        <section className="bg-[#0C0C0C] py-20 sm:py-24 md:py-32 relative z-10 w-full border-t border-[#1c1c1c]">
+          <div className="max-w-6xl mx-auto px-5 sm:px-8 md:px-10">
+            <FadeIn delay={0} y={40}>
+              <h2 className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-16 sm:mb-20 md:mb-28" style={{ fontSize: 'clamp(2.5rem, 12vw, 160px)' }}>
+                What I Love
+              </h2>
+            </FadeIn>
+            
+            <FadeIn delay={0.1} y={30} className="skills-cards">
+              <div className="skill-card">
+                <p className="tip">Python</p>
+                <p className="second-text">My core language for automation, data processing, and building tools like the PyCJ Compiler.</p>
+              </div>
+              <div className="skill-card">
+                <p className="tip">Web & React</p>
+                <p className="second-text">Designing and developing modern, responsive, and high-performance web applications from scratch.</p>
+              </div>
+              <div className="skill-card">
+                <p className="tip">C++</p>
+                <p className="second-text">Diving deep into software architecture, algorithms, and performance-focused programming.</p>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      );
+    };
+
     /* ================================================================
        6. MINIMALIST FOOTER
     ================================================================= */
@@ -1199,6 +1285,7 @@
             <AboutSection onContactClick={() => setIsModalOpen(true)} />
             <ServicesSection />
             <ProjectsSection />
+            <SkillsSection />
             <Footer onEmailClick={() => setIsEmailModalOpen(true)} onGithubClick={handleGithubRedirect} />
             
             {/* Render the Contact Form Modal via Portal */}
