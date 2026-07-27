@@ -87,15 +87,6 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .project-card-wrapper {
-      position: sticky;
-      top: calc(6rem + var(--card-offset, 0px));
-    }
-    @media (min-width: 768px) {
-      .project-card-wrapper {
-        top: calc(8rem + var(--card-offset, 0px));
-      }
-    }
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #0c0c0c; }
     ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -330,52 +321,78 @@
     }
 
     /* ================================================================
-       BENTO GRID PROJECTS ANIMATION (Added as requested)
+       PROJECTS HOVER BLUR EFFECT (Adapted from Uiverse.io by kamehame-ha)
     ================================================================= */
-    .bento-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 24px;
-      transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.4s ease;
+    .projects-grid {
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1.5rem;
-      min-height: 200px;
-      border: 1px solid rgba(255,255,255,0.05);
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
     }
-    .bento-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      z-index: 10;
+
+    .projects-grid .grid-card {
+      position: relative;
+      height: 300px;
+      width: 100%;
+      max-width: 350px;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 400ms ease;
+      border: 1px solid #333;
     }
-    .bento-card .bento-bg {
-      position: absolute;
-      inset: 0;
+
+    @media (min-width: 640px) {
+      .projects-grid .grid-card {
+        width: calc(50% - 15px);
+      }
+    }
+    @media (min-width: 1024px) {
+      .projects-grid .grid-card {
+        width: calc(33.33% - 15px);
+      }
+    }
+
+    .projects-grid .grid-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: 0;
-      transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+      transition: transform 400ms ease;
     }
-    .bento-card:hover .bento-bg {
-      transform: scale(1.1);
-    }
-    .bento-card .bento-overlay {
+
+    .projects-grid .grid-card .card-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
-      z-index: 1;
-      transition: opacity 0.4s ease;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
     }
-    .bento-card .bento-content {
-      position: relative;
-      z-index: 2;
-      transform: translateY(10px);
-      transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    .projects-grid .grid-card .card-text {
+      color: white;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      line-height: 1.3;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
-    .bento-card:hover .bento-content {
-      transform: translateY(0);
+
+    .projects-grid .grid-card:hover {
+      transform: scale(1.05, 1.05);
+      z-index: 20;
+      border-color: #39bda7;
+    }
+
+    .projects-grid .grid-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .projects-grid:hover > .grid-card:not(:hover) {
+      filter: blur(10px);
+      transform: scale(0.95, 0.95);
+      opacity: 0.5;
     }
   </style>
 </head>
@@ -428,7 +445,7 @@
         };
 
         const mouseOver = (e) => {
-          if (e.target.closest('a, button, .custom-contact-btn')) {
+          if (e.target.closest('a, button, .custom-contact-btn, .grid-card')) {
             outlineRef.current?.classList.add('cursor-hover');
           } else {
             outlineRef.current?.classList.remove('cursor-hover');
@@ -541,14 +558,6 @@
       >
         <span style={{ position: 'relative', zIndex: 2 }}>Contact Me</span>
       </button>
-    );
-
-    const LiveProjectButton = ({ href, className = '' }) => (
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        <button className={`rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base hover:bg-[#D7E2EA]/10 transition-colors whitespace-nowrap ${className}`}>
-          Live Project
-        </button>
-      </a>
     );
 
     const CharacterSpan = ({ char, progress, start, end }) => {
@@ -877,56 +886,13 @@
       { number: '05', name: 'Consultation', description: 'Helping beginners learn programming concepts, project architecture, debugging, and software development practices.' },
     ];
 
-    // Updated Projects Array (Matches your attached image description)
-    const projects = [
-      {
-        id: 1,
-        title: "Venture Past Our Sky Across the Universe",
-        description: "Nature & Exploration",
-        img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000&auto=format&fit=crop",
-        theme: "image",
-        span: "sm:col-span-2 sm:row-span-2"
-      },
-      {
-        id: 2,
-        title: "LAUNCH YOUR CODING CAREER.",
-        description: "Tech & Education",
-        img: null,
-        theme: "dark",
-        span: "sm:col-span-1 sm:row-span-1"
-      },
-      {
-        id: 3,
-        title: "Shaping tomorrow with vision and action.",
-        description: "Urban & Future",
-        img: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=1000&auto=format&fit=crop",
-        theme: "image",
-        span: "sm:col-span-1 sm:row-span-2"
-      },
-      {
-        id: 4,
-        title: "Work Smarter. Move Faster. AI Powers You Up.",
-        description: "Productivity",
-        img: null,
-        theme: "light-solid",
-        span: "sm:col-span-1 sm:row-span-1"
-      },
-      {
-        id: 5,
-        title: "BUILDING BRANDS THAT RESONATE",
-        description: "50+ BRANDS LAUNCHED",
-        img: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=1000&auto=format&fit=crop",
-        theme: "image",
-        span: "sm:col-span-1 sm:row-span-1"
-      },
-      {
-        id: 6,
-        title: "Own the future of your assets.",
-        description: "Finance & Web3",
-        img: null,
-        theme: "dark-solid",
-        span: "sm:col-span-1 sm:row-span-1"
-      }
+    const projectCards = [
+      { img: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?q=80&w=1000&auto=format&fit=crop', text: 'Venture Past Our Sky Across the Universe' },
+      { img: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop', text: 'Launch Your Coding Career.' },
+      { img: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=1000&auto=format&fit=crop', text: 'Shaping tomorrow with vision and action.' },
+      { img: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop', text: 'Work Smarter. Move Faster. AI Powers You Up.' },
+      { img: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1000&auto=format&fit=crop', text: 'Building Brands That Resonate' },
+      { img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a723623?q=80&w=1000&auto=format&fit=crop', text: 'Own the future of your assets.' },
     ];
 
     /* ================================================================
@@ -1098,50 +1064,29 @@
       );
     };
 
-    // Updated ProjectCard to render the Bento Grid Modules with the animation
-    const ProjectCard = ({ project }) => {
-      let themeClass = 'bg-[#1c1c1c] text-white';
-      if (project.theme === 'dark') themeClass = 'bg-[#0C0C0C] text-white border-[#222]';
-      if (project.theme === 'light-solid') themeClass = 'bg-white text-[#0C0C0C]';
-      if (project.theme === 'dark-solid') themeClass = 'bg-[#111111] text-white border-[#222]';
-
-      return (
-        <div className={`bento-card h-full w-full ${themeClass}`}>
-          {project.img && (
-            <img src={project.img} alt={project.title} className="bento-bg" loading="lazy" />
-          )}
-          {project.img && <div className="bento-overlay"></div>}
-          
-          <div className="bento-content">
-            <span className="text-xs uppercase tracking-widest opacity-80 mb-2 block font-medium">
-              {project.description}
-            </span>
-            <h3 className="text-lg md:text-2xl font-bold leading-tight">
-              {project.title}
-            </h3>
-          </div>
-        </div>
-      );
-    };
-
-    // Updated ProjectsSection rendering the 6 Modules Grid layout
+    // ================================================================
+    // PROJECTS SECTION (6 Grid Cards with Blur Hover)
+    // ================================================================
     const ProjectsSection = () => {
       return (
-        <section id="projects" className="bg-[#0C0C0C] rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] -mt-10 sm:-mt-12 md:-mt-14 z-10 relative w-full">
-          <div className="px-5 sm:px-8 md:px-10 pt-20 sm:pt-24 md:pt-32 pb-20 sm:pb-24 md:pb-32">
+        <section id="projects" className="bg-[#0C0C0C] py-20 sm:py-24 md:py-32 relative z-10 w-full">
+          <div className="max-w-6xl mx-auto px-5 sm:px-8 md:px-10">
             <FadeIn delay={0} y={40}>
-              <h2 className="hero-heading font-black uppercase leading-none tracking-tight text-center" style={{ fontSize: 'clamp(2.5rem, 12vw, 160px)' }}>
-                Projects
+              <h2 className="hero-heading font-black uppercase leading-none tracking-tight text-center mb-16 sm:mb-20 md:mb-28" style={{ fontSize: 'clamp(2.5rem, 12vw, 160px)' }}>
+                Project
               </h2>
             </FadeIn>
             
-            <div className="mt-16 sm:mt-20 md:mt-28 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 sm:auto-rows-[220px] gap-4 md:gap-6">
-              {projects.map((project, index) => (
-                <FadeIn key={project.id} delay={index * 0.1} y={30} className={`h-full ${project.span}`}>
-                  <ProjectCard project={project} />
-                </FadeIn>
+            <FadeIn delay={0.1} y={30} className="projects-grid">
+              {projectCards.map((card, i) => (
+                <div key={i} className="grid-card">
+                  <img src={card.img} alt={card.text} loading="lazy" />
+                  <div className="card-overlay">
+                    <p className="card-text">{card.text}</p>
+                  </div>
+                </div>
               ))}
-            </div>
+            </FadeIn>
           </div>
         </section>
       );
