@@ -17,6 +17,9 @@
   <!-- EmailJS SDK -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
+  <!-- ES Module Shims (Polyfill to guarantee importmaps work on all browsers/servers) -->
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+
   <!-- Suppress Tailwind & Babel console warnings -->
   <script>
     (function() {
@@ -58,7 +61,8 @@
       "imports": {
         "react": "https://esm.sh/react@18.3.1",
         "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
-        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+        "react-dom": "https://esm.sh/react-dom@18.3.1?external=react",
+        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
         "framer-motion": "https://esm.sh/framer-motion@11.11.17?external=react,react-dom",
         "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react"
       }
