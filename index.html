@@ -102,7 +102,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #444; }
 
     /* ================================================================
-       CUSTOM CURSOR STYLES
+       CUSTOM CURSOR STYLES (Optimized with will-change)
     ================================================================= */
     @media (pointer: fine) {
       * { cursor: none !important; }
@@ -111,13 +111,14 @@
         position: fixed; top: 0; left: 0; width: 8px; height: 8px;
         background-color: #39bda7; border-radius: 50%;
         transform: translate(-50%, -50%); z-index: 9999; pointer-events: none;
-        transition: opacity 0.2s;
+        transition: opacity 0.2s; will-change: transform, left, top;
       }
       .cursor-outline {
         position: fixed; top: 0; left: 0; width: 40px; height: 40px;
         border: 2px solid rgba(57, 189, 167, 0.5); border-radius: 50%;
         transform: translate(-50%, -50%); z-index: 9998; pointer-events: none;
         transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+        will-change: transform, left, top;
       }
       .cursor-outline.cursor-hover {
         width: 60px; height: 60px; background-color: rgba(57, 189, 167, 0.1); border-color: transparent;
@@ -335,6 +336,7 @@
     .marquee-row {
       display: flex;
       gap: 12px;
+      will-change: transform; /* Optimizes scroll animation */
     }
 
     .marquee-card {
@@ -410,7 +412,7 @@
     );
 
     /* ================================================================
-       2. UI ADDONS (Cursor, Scroll Bar)
+       2. UI ADDONS (Cursor, Scroll Bar) - OPTIMIZED
     ================================================================= */
     const CustomCursor = () => {
       const dotRef = useRef(null);
@@ -460,7 +462,7 @@
     };
 
     /* ================================================================
-       3. REUSABLE COMPONENTS
+       3. REUSABLE COMPONENTS - OPTIMIZED
     ================================================================= */
 
     const FadeIn = ({ 
@@ -489,6 +491,7 @@
       );
     };
 
+    // OPTIMIZED: Uses direct DOM manipulation instead of React state for mousemove
     const Magnet = ({ 
       children, 
       padding = 100, 
@@ -498,36 +501,44 @@
       className = '' 
     }) => {
       const ref = useRef(null);
-      const [transform, setTransform] = useState('translate3d(0, 0, 0)');
-      const [isActive, setIsActive] = useState(false);
 
       useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        
+        let isActive = false;
+
         const handleMouseMove = (e) => {
-          if (!ref.current) return;
-          const rect = ref.current.getBoundingClientRect();
+          const rect = el.getBoundingClientRect();
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
           const distX = e.clientX - centerX;
           const distY = e.clientY - centerY;
 
           if (Math.abs(distX) < rect.width / 2 + padding && Math.abs(distY) < rect.height / 2 + padding) {
-            setTransform(`translate3d(${distX / strength}px, ${distY / strength}px, 0)`);
-            setIsActive(true);
+            el.style.transform = `translate3d(${distX / strength}px, ${distY / strength}px, 0)`;
+            if (!isActive) {
+              el.style.transition = activeTransition;
+              isActive = true;
+            }
           } else {
-            setTransform('translate3d(0, 0, 0)');
-            setIsActive(false);
+            if (isActive) {
+              el.style.transition = inactiveTransition;
+              el.style.transform = 'translate3d(0, 0, 0)';
+              isActive = false;
+            }
           }
         };
 
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
-      }, [padding, strength]);
+      }, [padding, strength, activeTransition, inactiveTransition]);
 
       return (
         <div 
           ref={ref} 
-          style={{ transform, transition: isActive ? activeTransition : inactiveTransition, willChange: 'transform' }} 
           className={className}
+          style={{ willChange: 'transform' }}
         >
           {children}
         </div>
@@ -974,20 +985,39 @@
       );
     };
 
+    // OPTIMIZED: Uses requestAnimationFrame and direct DOM manipulation for scroll
     const MarqueeSection = () => {
       const sectionRef = useRef(null);
-      const [offset, setOffset] = useState(0);
+      const row1Ref = useRef(null);
+      const row2Ref = useRef(null);
 
       useEffect(() => {
+        let rafId = null;
+        
         const handleScroll = () => {
-          if (!sectionRef.current) return;
-          const sectionTop = sectionRef.current.offsetTop;
-          const newOffset = (window.scrollY - sectionTop + window.innerHeight) * 0.3;
-          setOffset(newOffset);
+          if (rafId) return;
+          rafId = requestAnimationFrame(() => {
+            if (!sectionRef.current) return;
+            const sectionTop = sectionRef.current.offsetTop;
+            const newOffset = (window.scrollY - sectionTop + window.innerHeight) * 0.3;
+            
+            if (row1Ref.current) {
+              row1Ref.current.style.transform = `translateX(${newOffset - 200}px)`;
+            }
+            if (row2Ref.current) {
+              row2Ref.current.style.transform = `translateX(${-(newOffset - 200)}px)`;
+            }
+            rafId = null;
+          });
         };
+
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
+        handleScroll(); // Initial call
+        
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+          if (rafId) cancelAnimationFrame(rafId);
+        };
       }, []);
 
       const row1Images = [...marqueeImages.slice(0, 11), ...marqueeImages.slice(0, 11), ...marqueeImages.slice(0, 11)];
@@ -996,17 +1026,17 @@
       return (
         <section ref={sectionRef} className="bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden">
           <div className="flex flex-col gap-3">
-            <div className="marquee-row" style={{ transform: `translateX(${offset - 200}px)`, willChange: 'transform' }}>
+            <div ref={row1Ref} className="marquee-row">
               {row1Images.map((src, i) => (
                 <div key={`r1-${i}`} className="marquee-card">
-                  <img src={src} alt="" loading="lazy" />
+                  <img src={src} alt="" loading="lazy" decoding="async" />
                 </div>
               ))}
             </div>
-            <div className="marquee-row" style={{ transform: `translateX(${-(offset - 200)}px)`, willChange: 'transform' }}>
+            <div ref={row2Ref} className="marquee-row">
               {row2Images.map((src, i) => (
                 <div key={`r2-${i}`} className="marquee-card">
-                  <img src={src} alt="" loading="lazy" />
+                  <img src={src} alt="" loading="lazy" decoding="async" />
                 </div>
               ))}
             </div>
@@ -1020,16 +1050,16 @@
       return (
         <section id="about" className="min-h-screen flex flex-col items-center justify-center relative px-5 sm:px-8 md:px-10 py-20 w-full" style={{ overflowX: 'clip' }}>
           <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute top-[4%] left-[1%] sm:left-[2%] md:left-[4%] z-0 pointer-events-none">
-            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png" alt="" className="w-[80px] sm:w-[160px] md:w-[210px]" />
+            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png" alt="" className="w-[80px] sm:w-[160px] md:w-[210px]" loading="lazy" decoding="async" />
           </FadeIn>
           <FadeIn delay={0.25} x={-80} y={0} duration={0.9} className="absolute bottom-[8%] left-[3%] sm:left-[6%] md:left-[10%] z-0 pointer-events-none">
-            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png" alt="" className="w-[70px] sm:w-[140px] md:w-[180px]" />
+            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png" alt="" className="w-[70px] sm:w-[140px] md:w-[180px]" loading="lazy" decoding="async" />
           </FadeIn>
           <FadeIn delay={0.15} x={80} y={0} duration={0.9} className="absolute top-[4%] right-[1%] sm:right-[2%] md:right-[4%] z-0 pointer-events-none">
-            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png" alt="" className="w-[80px] sm:w-[160px] md:w-[210px]" />
+            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png" alt="" className="w-[80px] sm:w-[160px] md:w-[210px]" loading="lazy" decoding="async" />
           </FadeIn>
           <FadeIn delay={0.3} x={80} y={0} duration={0.9} className="absolute bottom-[8%] right-[3%] sm:right-[6%] md:right-[10%] z-0 pointer-events-none">
-            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png" alt="" className="w-[90px] sm:w-[170px] md:w-[220px]" />
+            <img src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png" alt="" className="w-[90px] sm:w-[170px] md:w-[220px]" loading="lazy" decoding="async" />
           </FadeIn>
 
           <div className="flex flex-col items-center gap-10 sm:gap-14 md:gap-16 relative z-10 w-full max-w-4xl">
@@ -1108,11 +1138,11 @@
             </div>
             <div className="flex gap-3 sm:gap-4 md:gap-6 flex-1 min-h-0">
               <div className="flex flex-col gap-3 sm:gap-4 md:gap-6 w-[40%]">
-                <img src={project.images.col1img1} alt="" className="w-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover flex-shrink-0" style={{ height: 'clamp(130px, 16vw, 230px)' }} loading="lazy" />
-                <img src={project.images.col1img2} alt="" className="w-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover flex-1 min-h-0" style={{ minHeight: 'clamp(160px, 22vw, 340px)' }} loading="lazy" />
+                <img src={project.images.col1img1} alt="" className="w-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover flex-shrink-0" style={{ height: 'clamp(130px, 16vw, 230px)' }} loading="lazy" decoding="async" />
+                <img src={project.images.col1img2} alt="" className="w-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover flex-1 min-h-0" style={{ minHeight: 'clamp(160px, 22vw, 340px)' }} loading="lazy" decoding="async" />
               </div>
               <div className="w-[60%]">
-                <img src={project.images.col2img} alt="" className="w-full h-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover" loading="lazy" />
+                <img src={project.images.col2img} alt="" className="w-full h-full rounded-[16px] sm:rounded-[32px] md:rounded-[40px] object-cover" loading="lazy" decoding="async" />
               </div>
             </div>
           </motion.div>
