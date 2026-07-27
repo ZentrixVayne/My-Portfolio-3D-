@@ -328,30 +328,6 @@
       100% { left: 50%; }
       0% { left: 0%; }
     }
-
-    /* ================================================================
-       PROJECTS HOVER BLUR EFFECT (Adapted from Uiverse.io by kamehame-ha)
-    ================================================================= */
-    .projects-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .projects-list .project-card-wrapper {
-      transition: 400ms ease;
-      transform-origin: center;
-    }
-
-    .projects-list:hover > .project-card-wrapper:not(:hover) {
-      filter: blur(10px);
-      transform: scale(0.95, 0.95);
-      opacity: 0.5;
-    }
-
-    .projects-list .project-card-wrapper:hover {
-      transform: scale(1.02, 1.02);
-      z-index: 20;
-    }
   </style>
 </head>
 <body>
@@ -403,7 +379,7 @@
         };
 
         const mouseOver = (e) => {
-          if (e.target.closest('a, button, .custom-contact-btn, .project-card-wrapper')) {
+          if (e.target.closest('a, button, .custom-contact-btn')) {
             outlineRef.current?.classList.add('cursor-hover');
           } else {
             outlineRef.current?.classList.remove('cursor-hover');
@@ -1099,8 +1075,7 @@
                 Project
               </h2>
             </FadeIn>
-            {/* Added projects-list class for the blur hover effect */}
-            <div className="mt-16 sm:mt-20 md:mt-28 max-w-6xl mx-auto projects-list">
+            <div className="mt-16 sm:mt-20 md:mt-28 max-w-6xl mx-auto">
               {projects.map((project, index) => (
                 <ProjectCard key={index} project={project} index={index} total={projects.length} />
               ))}
