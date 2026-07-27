@@ -328,6 +328,56 @@
       100% { left: 50%; }
       0% { left: 0%; }
     }
+
+    /* ================================================================
+       MARQUEE BLUR HOVER EFFECT (Adapted from Uiverse.io by kamehame-ha)
+    ================================================================= */
+    .marquee-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .marquee-card {
+      position: relative;
+      height: 200px;
+      width: 300px;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 400ms ease;
+      border: 1px solid #333;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 640px) {
+      .marquee-card {
+        height: 270px;
+        width: 420px;
+      }
+    }
+
+    .marquee-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 400ms ease;
+    }
+
+    .marquee-card:hover {
+      transform: scale(1.1);
+      z-index: 10;
+      border-color: #39bda7;
+    }
+
+    .marquee-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .marquee-row:hover > .marquee-card:not(:hover) {
+      filter: blur(10px);
+      transform: scale(0.9);
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
@@ -379,7 +429,7 @@
         };
 
         const mouseOver = (e) => {
-          if (e.target.closest('a, button, .custom-contact-btn')) {
+          if (e.target.closest('a, button, .custom-contact-btn, .marquee-card')) {
             outlineRef.current?.classList.add('cursor-hover');
           } else {
             outlineRef.current?.classList.remove('cursor-hover');
@@ -946,14 +996,18 @@
       return (
         <section ref={sectionRef} className="bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden">
           <div className="flex flex-col gap-3">
-            <div className="flex gap-3" style={{ transform: `translateX(${offset - 200}px)`, willChange: 'transform' }}>
+            <div className="marquee-row" style={{ transform: `translateX(${offset - 200}px)`, willChange: 'transform' }}>
               {row1Images.map((src, i) => (
-                <img key={`r1-${i}`} src={src} className="w-[300px] h-[200px] sm:w-[420px] sm:h-[270px] rounded-2xl object-cover flex-shrink-0" loading="lazy" alt="" />
+                <div key={`r1-${i}`} className="marquee-card">
+                  <img src={src} alt="" loading="lazy" />
+                </div>
               ))}
             </div>
-            <div className="flex gap-3" style={{ transform: `translateX(${-(offset - 200)}px)`, willChange: 'transform' }}>
+            <div className="marquee-row" style={{ transform: `translateX(${-(offset - 200)}px)`, willChange: 'transform' }}>
               {row2Images.map((src, i) => (
-                <img key={`r2-${i}`} src={src} className="w-[300px] h-[200px] sm:w-[420px] sm:h-[270px] rounded-2xl object-cover flex-shrink-0" loading="lazy" alt="" />
+                <div key={`r2-${i}`} className="marquee-card">
+                  <img src={src} alt="" loading="lazy" />
+                </div>
               ))}
             </div>
           </div>
