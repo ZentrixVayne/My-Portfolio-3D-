@@ -102,6 +102,29 @@
     ::-webkit-scrollbar-thumb:hover { background: #444; }
 
     /* ================================================================
+       CUSTOM CURSOR STYLES
+    ================================================================= */
+    @media (pointer: fine) {
+      * { cursor: none !important; }
+      input, textarea { cursor: text !important; }
+      .cursor-dot {
+        position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+        background-color: #39bda7; border-radius: 50%;
+        transform: translate(-50%, -50%); z-index: 9999; pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .cursor-outline {
+        position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+        border: 2px solid rgba(57, 189, 167, 0.5); border-radius: 50%;
+        transform: translate(-50%, -50%); z-index: 9998; pointer-events: none;
+        transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+      }
+      .cursor-outline.cursor-hover {
+        width: 60px; height: 60px; background-color: rgba(57, 189, 167, 0.1); border-color: transparent;
+      }
+    }
+
+    /* ================================================================
        CUSTOM CONTACT BUTTON (From Uiverse.io)
     ================================================================= */
     .custom-contact-btn {
@@ -194,12 +217,12 @@
       margin: 0 10px;
       background-color: transparent;
       animation: circle-keys var(--animation);
-      box-sizing: content-box; /* Prevents Tailwind reset from breaking it */
+      box-sizing: content-box;
     }
 
     .loader .circle .dot {
       position: absolute;
-      top: 50%; /* Fixed missing top/left */
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 16px;
@@ -211,7 +234,7 @@
 
     .loader .circle .outline {
       position: absolute;
-      top: 50%; /* Fixed missing top/left */
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 20px;
@@ -262,7 +285,7 @@
     import React, { useRef, useEffect, useState } from 'react';
     import { createRoot } from 'react-dom/client';
     import { createPortal } from 'react-dom';
-    import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+    import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
     import { PlusIcon, MailIcon } from 'lucide-react';
 
     /* ================================================================
@@ -285,7 +308,57 @@
     );
 
     /* ================================================================
-       2. REUSABLE COMPONENTS
+       2. UI ADDONS (Cursor, Scroll Bar)
+    ================================================================= */
+    const CustomCursor = () => {
+      const dotRef = useRef(null);
+      const outlineRef = useRef(null);
+
+      useEffect(() => {
+        const mouseMove = (e) => {
+          if (dotRef.current) {
+            dotRef.current.style.left = `${e.clientX}px`;
+            dotRef.current.style.top = `${e.clientY}px`;
+          }
+          if (outlineRef.current) {
+            outlineRef.current.style.left = `${e.clientX}px`;
+            outlineRef.current.style.top = `${e.clientY}px`;
+          }
+        };
+
+        const mouseOver = (e) => {
+          if (e.target.closest('a, button, .custom-contact-btn')) {
+            outlineRef.current?.classList.add('cursor-hover');
+          } else {
+            outlineRef.current?.classList.remove('cursor-hover');
+          }
+        };
+
+        window.addEventListener('mousemove', mouseMove);
+        document.addEventListener('mouseover', mouseOver);
+
+        return () => {
+          window.removeEventListener('mousemove', mouseMove);
+          document.removeEventListener('mouseover', mouseOver);
+        };
+      }, []);
+
+      return (
+        <>
+          <div ref={dotRef} className="cursor-dot hidden md:block"></div>
+          <div ref={outlineRef} className="cursor-outline hidden md:block"></div>
+        </>
+      );
+    };
+
+    const ScrollProgress = () => {
+      const { scrollYProgress } = useScroll();
+      const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+      return <motion.div style={{ scaleX }} className="fixed top-0 left-0 right-0 h-1 bg-[#39bda7] origin-left z-[9998]" />;
+    };
+
+    /* ================================================================
+       3. REUSABLE COMPONENTS
     ================================================================= */
 
     const FadeIn = ({ 
@@ -578,7 +651,7 @@
     };
 
     /* ================================================================
-       3. DATA
+       4. DATA
     ================================================================= */
 
     const marqueeImages = [
@@ -624,7 +697,7 @@
     ];
 
     /* ================================================================
-       4. SECTIONS
+       5. SECTIONS
     ================================================================= */
 
     const HeroSection = ({ onContactClick, onNavClick }) => {      
@@ -633,15 +706,19 @@
           {/* Navbar - Clean URLs */}
           <FadeIn as="nav" delay={0} y={-20} className="flex justify-between items-center px-6 md:px-10 pt-6 md:pt-8 w-full relative z-30 flex-shrink-0">
             
-            {/* Left Link */}
-            <a href="/about" onClick={(e) => onNavClick(e, 'about')} className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer">
-              About
-            </a>
+            {/* Left Link (Magnetic) */}
+            <Magnet padding={40} strength={4}>
+              <a href="/about" onClick={(e) => onNavClick(e, 'about')} className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer">
+                About
+              </a>
+            </Magnet>
 
-            {/* Right Link */}
-            <a href="/projects" onClick={(e) => onNavClick(e, 'projects')} className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer">
-              Projects
-            </a>
+            {/* Right Link (Magnetic) */}
+            <Magnet padding={40} strength={4}>
+              <a href="/projects" onClick={(e) => onNavClick(e, 'projects')} className="text-[#D7E2EA] font-medium uppercase tracking-wider text-xs sm:text-sm md:text-lg lg:text-[1.4rem] hover:opacity-70 transition-opacity duration-200 cursor-pointer">
+                Projects
+              </a>
+            </Magnet>
 
           </FadeIn>
 
@@ -847,7 +924,29 @@
     };
 
     /* ================================================================
-       5. MAIN APP
+       6. MINIMALIST FOOTER
+    ================================================================= */
+    const Footer = ({ onContactClick }) => (
+      <footer className="bg-[#0C0C0C] pt-20 pb-10 px-6 md:px-10 border-t border-[#1c1c1c] relative z-10 w-full text-center">
+        <FadeIn delay={0} y={30}>
+          <h2 className="hero-heading text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tight mb-8">
+            Let's build something incredible together
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <ContactButton onClick={onContactClick} />
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="text-[#D7E2EA] hover:text-[#39bda7] transition-colors uppercase tracking-widest text-sm font-medium">GitHub</a>
+            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="text-[#D7E2EA] hover:text-[#39bda7] transition-colors uppercase tracking-widest text-sm font-medium">Instagram</a>
+            <a href="mailto:workwitharshman@gmail.com" className="text-[#D7E2EA] hover:text-[#39bda7] transition-colors uppercase tracking-widest text-sm font-medium">Email</a>
+          </div>
+          <p className="text-[#D7E2EA]/40 text-xs uppercase tracking-widest">
+            © {new Date().getFullYear()} Arshman Anil. All rights reserved.
+          </p>
+        </FadeIn>
+      </footer>
+    );
+
+    /* ================================================================
+       7. MAIN APP
     ================================================================= */
 
     const App = () => {
@@ -908,6 +1007,9 @@
 
       return (
         <>
+          <CustomCursor />
+          <ScrollProgress />
+
           <AnimatePresence>
             {isLoading && <Loader />}
           </AnimatePresence>
@@ -918,6 +1020,7 @@
             <AboutSection onContactClick={() => setIsModalOpen(true)} />
             <ServicesSection />
             <ProjectsSection />
+            <Footer onContactClick={() => setIsModalOpen(true)} />
             
             {/* Render the Contact Popup Modal via Portal */}
             <ContactModal 
