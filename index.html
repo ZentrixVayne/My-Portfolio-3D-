@@ -405,53 +405,11 @@
     .hero {
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 8rem 0 0;
+      align-items: center;
+      padding: 8rem 0 4rem;
       position: relative;
       overflow: hidden;
       isolation: isolate;
-    }
-    .hero > .container { flex: 1; display: flex; align-items: center; }
-    .hero-marquee {
-      position: relative;
-      width: 100%;
-      padding: 1.5rem 0;
-      overflow: hidden;
-      -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-      mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.8s var(--ease) 1.2s;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .hero-marquee.in { opacity: 1; }
-    .hero-marquee-track {
-      display: flex;
-      gap: 2.5rem;
-      width: max-content;
-      animation: hero-marquee 35s linear infinite;
-      will-change: transform;
-    }
-    @keyframes hero-marquee { to { transform: translateX(-50%); } }
-    .hero-marquee-item {
-      font-family: var(--font-serif);
-      font-size: clamp(1.3rem, 2.6vw, 2rem);
-      color: var(--text-faint);
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 2.5rem;
-      font-style: italic;
-    }
-    .hero-marquee-item .star {
-      color: var(--text-faint);
-      opacity: 0.5;
-      font-style: normal;
-    }
-    @media (max-width: 900px) {
-      .hero-marquee-item { font-size: 1.1rem; gap: 1.8rem; }
     }
 
     /* ---------- AURORA BACKGROUND — the premium signature ----------
@@ -528,7 +486,8 @@
     }
 
     /* ---------- ANIMATED GRADIENT SHIMMER ON HERO NAME ---------- */
-    .hero-name {
+    /* Gradient shimmer applied to the spans so background-clip works */
+    .hero-name .line span {
       background: linear-gradient(
         100deg,
         var(--text) 0%,
@@ -545,7 +504,6 @@
       animation: shimmer 7s ease-in-out infinite;
     }
     .hero-name .line.italic span {
-      /* Italic line uses muted color — keep its gradient subtle */
       background: linear-gradient(
         100deg,
         var(--text-muted) 0%,
@@ -1911,10 +1869,6 @@
           </div>
         </div>
       </div>
-      <!-- Running marquee strip inside hero (same font as the page) -->
-      <div class="hero-marquee" aria-hidden="true">
-        <div class="hero-marquee-track" id="heroMarqueeTrack"></div>
-      </div>
     </section>
 
     <!-- ============ TECH MARQUEE ============ -->
@@ -2830,19 +2784,6 @@
         `<span class="marquee-item">${t}<span class="star">✦</span></span>`
       ).join('');
       track.innerHTML = html;
-    })();
-
-    /* ---------- Hero marquee (running strip inside hero) ---------- */
-    (function heroMarquee(){
-      const track = $('#heroMarqueeTrack');
-      if (!track) return;
-      const items = ['Developer','Designer','Cybersecurity','Creative Development','Code & Craft','Digital Experiences'];
-      const html = [...items, ...items, ...items].map(t =>
-        `<span class="hero-marquee-item">${t}<span class="star">✦</span></span>`
-      ).join('');
-      track.innerHTML = html;
-      // Reveal after hero loads
-      setTimeout(() => track.parentElement.classList.add('in'), 1200);
     })();
 
     /* ---------- Cursor "VIEW" state over project images ---------- */
