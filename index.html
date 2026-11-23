@@ -800,7 +800,29 @@
       letter-spacing: -0.005em;
       margin-bottom: 1.2rem;
     }
-    .skill-list { display: flex; flex-direction: column; gap: 0.55rem; }
+    /* 3-tier skill groups: Confident / Learning / Exploring */
+    .skill-group { margin-bottom: 1rem; }
+    .skill-group:last-child { margin-bottom: 0; }
+    .skill-group-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 500;
+    }
+    .skill-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .skill-dot.dot-green { background: #5dd88a; box-shadow: 0 0 6px rgba(93,216,138,0.4); }
+    .skill-dot.dot-amber { background: #e8b85d; }
+    .skill-dot.dot-gray { background: var(--text-faint); opacity: 0.5; }
+    .skill-list { display: flex; flex-direction: column; gap: 0.45rem; }
     .skill-list li {
       font-size: 0.9rem;
       color: var(--text-muted);
@@ -2066,11 +2088,41 @@
 
     /* ============ SKILLS ============ */
     const SKILLS = [
-      { num: "01", title: "Programming Languages", items: ["Python","C","C++","Java","JavaScript","TypeScript","SQL","Go","Rust","PHP","C#","HTML","CSS","Bash"] },
-      { num: "02", title: "Web Development", items: ["Frontend development","Basic backend development","Website development","Git & GitHub","Linux","Bash scripting"] },
-      { num: "03", title: "Cybersecurity", items: ["Cybersecurity fundamentals","Networking basics","Threat awareness","Secure coding","Ethical hacking (learning)"] },
-      { num: "04", title: "Creative Design", items: ["Graphic design","UI/UX design","Branding","Video editing","Motion graphics","Animation"] },
-      { num: "05", title: "AI & Automation", items: ["AI-assisted creative development","Programming & automation","Prompt engineering","Workflow automation"] },
+      {
+        num: "01",
+        title: "Programming Languages",
+        confident: ["Python", "C", "C++", "PHP", "HTML", "CSS", "JavaScript"],
+        learning: ["Java", "TypeScript", "Go", "Rust", "C#", "Bash"],
+        exploring: ["SQL"],
+      },
+      {
+        num: "02",
+        title: "Web Development",
+        confident: ["Frontend development", "Website development"],
+        learning: ["Basic backend development", "Git & GitHub", "Linux", "Bash scripting"],
+        exploring: [],
+      },
+      {
+        num: "03",
+        title: "Cybersecurity",
+        confident: [],
+        learning: ["Cybersecurity fundamentals"],
+        exploring: ["Networking basics", "Threat awareness", "Secure coding", "Ethical hacking"],
+      },
+      {
+        num: "04",
+        title: "Creative Design",
+        confident: ["Graphic design", "UI/UX design", "Branding", "Animation"],
+        learning: ["Video editing", "Motion graphics"],
+        exploring: [],
+      },
+      {
+        num: "05",
+        title: "AI & Automation",
+        confident: ["Programming & automation"],
+        learning: ["AI-assisted creative development"],
+        exploring: ["Prompt engineering", "Workflow automation"],
+      },
     ];
 
     /* ============ SERVICES ============ */
@@ -2179,7 +2231,7 @@
       { num: 1, unit: "yr",  label: "AI Work" },
     ];
     const EXPERIENCE = [
-      { icon: "briefcase", title: "Freelancing", text: "Designing and developing websites, branding assets and creative work for clients." },
+      { icon: "briefcase", title: "Creative Tools", text: "Designed and built Keyforge, Cipherly, Chroma and an animated 404 page — real, deployed web tools used by real visitors." },
       { icon: "code",      title: "Personal Projects", text: "Building tools, experiments and side projects across web, security and AI." },
       { icon: "cap",       title: "School Projects", text: "Collaborative academic work spanning programming, design and presentations." },
     ];
@@ -2357,14 +2409,36 @@
       });
     });
 
-    /* ---------- Custom cursor (optimized — translate3d + rAF-gated) ---------- */
+    /* ---------- Custom cursor (event-driven, suspends when tab hidden) ---------- */
     (function cursor(){
       if (window.matchMedia('(pointer: coarse)').matches) return;
       const dot = $('#cursorDot');
       const ring = $('#cursorRing');
       let mx = 0, my = 0, rx = 0, ry = 0;
       let pending = false;
-      // Use translate3d for GPU compositing — avoids layout/paint thrash
+      let rafId = null;
+      let needsUpdate = false;
+
+      function loop(){
+        // Lerp the ring toward the mouse
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
+        // Stop the loop once the ring has caught up to the mouse (within 0.5px)
+        if (Math.abs(mx - rx) < 0.5 && Math.abs(my - ry) < 0.5) {
+          rafId = null;
+          needsUpdate = false;
+        } else {
+          rafId = requestAnimationFrame(loop);
+        }
+      }
+      function startLoop(){
+        if (rafId) return; // already running
+        needsUpdate = true;
+        rafId = requestAnimationFrame(loop);
+      }
+
+      // Dot updates only on mousemove (rAF-gated to 1 per frame)
       window.addEventListener('mousemove', e => {
         mx = e.clientX; my = e.clientY;
         if (!pending) {
@@ -2374,15 +2448,19 @@
             pending = false;
           });
         }
+        startLoop(); // wake the ring lerp
       }, { passive: true });
-      // Ring follows with lerp — runs every frame but only writes one transform
-      function loop(){
-        rx += (mx - rx) * 0.18;
-        ry += (my - ry) * 0.18;
-        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
-        requestAnimationFrame(loop);
-      }
-      loop();
+
+      // Suspend when tab is hidden (saves CPU/battery)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        } else if (!document.hidden && needsUpdate) {
+          startLoop();
+        }
+      });
+
       document.addEventListener('mouseover', e => {
         if (e.target.closest('[data-cursor="hover"], a, button')) document.body.classList.add('cursor-hover');
       });
@@ -2407,16 +2485,27 @@
       els.forEach(el => io.observe(el));
     })();
 
-    /* ---------- Render skills ---------- */
+    /* ---------- Render skills (3-tier: Confident / Learning / Exploring) ---------- */
     (function renderSkills(){
       const grid = $('#skillsGrid');
+      const renderGroup = (label, items, dotClass) => {
+        if (!items || items.length === 0) return '';
+        return `
+          <div class="skill-group">
+            <div class="skill-group-label"><span class="skill-dot ${dotClass}"></span>${label}</div>
+            <ul class="skill-list">
+              ${items.map(i => `<li>${i}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      };
       grid.innerHTML = SKILLS.map(s => `
         <div class="skill-block">
           <div class="num">${s.num}</div>
           <h3>${s.title}</h3>
-          <ul class="skill-list">
-            ${s.items.map(i => `<li>${i}</li>`).join('')}
-          </ul>
+          ${renderGroup('Confident', s.confident, 'dot-green')}
+          ${renderGroup('Learning', s.learning, 'dot-amber')}
+          ${renderGroup('Exploring', s.exploring, 'dot-gray')}
         </div>
       `).join('');
     })();
@@ -2593,14 +2682,22 @@
       `).join('');
     })();
 
-    /* ---------- Contact modal ---------- */
+    /* ---------- Contact modal (with focus trap + restore) ---------- */
     (function contactModal(){
       const backdrop = $('#modalBackdrop');
+      const modal = backdrop.querySelector('.modal');
       const openBtns = [$('#contactOpenBtn'), $('#heroContactBtn'), $('#navContactBtn'), $('#footerEmailBtn')].filter(Boolean);
       const closeBtn = $('#modalClose');
       const copyBtn = $('#copyBtn');
+      let lastFocused = null;
 
-      function open(){
+      // Focusable elements inside the modal
+      function getFocusable(){
+        return modal.querySelectorAll('button, a, input, [tabindex]:not([tabindex="-1"])');
+      }
+
+      function open(trigger){
+        lastFocused = trigger || document.activeElement;
         backdrop.classList.add('open');
         document.body.style.overflow = 'hidden';
         setTimeout(() => closeBtn.focus(), 50);
@@ -2608,12 +2705,26 @@
       function close(){
         backdrop.classList.remove('open');
         document.body.style.overflow = '';
+        // Return focus to the element that opened the modal
+        if (lastFocused) lastFocused.focus();
       }
-      openBtns.forEach(b => b.addEventListener('click', e => { e.preventDefault(); open(); }));
+      openBtns.forEach(b => b.addEventListener('click', e => { e.preventDefault(); open(b); }));
       closeBtn.addEventListener('click', close);
       backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && backdrop.classList.contains('open')) close();
+        if (!backdrop.classList.contains('open')) return;
+        if (e.key === 'Escape') { close(); return; }
+        // Focus trap — Tab cycles within the modal
+        if (e.key === 'Tab') {
+          const f = getFocusable();
+          if (f.length === 0) return;
+          const first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+          }
+        }
       });
 
       /* Copy email */
@@ -2637,9 +2748,6 @@
           copyBtn.querySelector('span').textContent = 'Copy';
         }, 2000);
       });
-
-      /* Footer email -> open modal instead of mailto */
-      $('#footerEmailBtn').addEventListener('click', e => e.preventDefault());
     })();
 
     /* ---------- Footer year ---------- */
