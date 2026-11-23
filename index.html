@@ -405,11 +405,53 @@
     .hero {
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      padding: 8rem 0 4rem;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 0 0;
       position: relative;
       overflow: hidden;
       isolation: isolate;
+    }
+    .hero > .container { flex: 1; display: flex; align-items: center; }
+    .hero-marquee {
+      position: relative;
+      width: 100%;
+      padding: 1.5rem 0;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s var(--ease) 1.2s;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-marquee.in { opacity: 1; }
+    .hero-marquee-track {
+      display: flex;
+      gap: 2.5rem;
+      width: max-content;
+      animation: hero-marquee 35s linear infinite;
+      will-change: transform;
+    }
+    @keyframes hero-marquee { to { transform: translateX(-50%); } }
+    .hero-marquee-item {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.6vw, 2rem);
+      color: var(--text-faint);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 2.5rem;
+      font-style: italic;
+    }
+    .hero-marquee-item .star {
+      color: var(--text-faint);
+      opacity: 0.5;
+      font-style: normal;
+    }
+    @media (max-width: 900px) {
+      .hero-marquee-item { font-size: 1.1rem; gap: 1.8rem; }
     }
 
     /* ---------- AURORA BACKGROUND — the premium signature ----------
@@ -485,12 +527,8 @@
       .aurora-blob.c { width: 85vw; height: 85vw; }
     }
 
-    /* ---------- ANIMATED GRADIENT SHIMMER ON HERO NAME ----------
-       The gradient + clip MUST live on each .line span itself, not on the
-       parent <h1>. A transformed inline-block child does not inherit the
-       parent's background-clip:text, so without its own background the span
-       renders with transparent fill and is invisible (the "Arshman" bug). */
-    .hero-name .line span {
+    /* ---------- ANIMATED GRADIENT SHIMMER ON HERO NAME ---------- */
+    .hero-name {
       background: linear-gradient(
         100deg,
         var(--text) 0%,
@@ -526,8 +564,7 @@
       50%      { background-position: 0% 0; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .hero-name .line span,
-      .hero-name .line.italic span {
+      .hero-name, .hero-name .line.italic span {
         animation: none;
         background: none;
         -webkit-text-fill-color: initial;
@@ -1874,9 +1911,9 @@
           </div>
         </div>
       </div>
-      <div class="hero-scroll">
-        <span>Scroll</span>
-        <span class="line"></span>
+      <!-- Running marquee strip inside hero (same font as the page) -->
+      <div class="hero-marquee" aria-hidden="true">
+        <div class="hero-marquee-track" id="heroMarqueeTrack"></div>
       </div>
     </section>
 
@@ -2160,6 +2197,24 @@
         featured: false,
         demoContent: false,
       },
+      {
+        id: "error404",
+        title: "404 — Lost in Space",
+        category: "Creative Design",
+        description: "An animated 404 error page with a canvas particle system, floating stick figures, and a playful bright aesthetic. Fully responsive, vanilla JS, no dependencies.",
+        image: "404-logo.svg",
+        technologies: ["JavaScript", "Canvas API", "Web Animations API"],
+        demo: "https://error404-ochre.vercel.app/",
+        features: [
+          "Canvas-based particle system with 300 drifting, growing circles",
+          "Five animated stick figures crossing the screen at varying speeds",
+          "Stick figures rotate and loop infinitely using the Web Animations API",
+          "Delayed message reveal with Go Back and Go Home navigation buttons",
+          "Fully responsive with a bright teal-to-cyan gradient palette",
+        ],
+        featured: false,
+        demoContent: false,
+      },
     ];
 
     /* ============ EXPERIENCE ============ */
@@ -2222,7 +2277,7 @@
         requestAnimationFrame(() => el.style.transform = 'translateY(0)');
       });
       // Reveal hero text bits
-      ['.hero-role','.hero-tagline','.hero-ctas','.hero-scroll'].forEach((sel, i) => {
+      ['.hero-role','.hero-tagline','.hero-ctas'].forEach((sel, i) => {
         const el = $(sel); if (!el) return;
         el.style.transition = 'opacity 0.8s var(--ease), transform 0.8s var(--ease)';
         el.style.transitionDelay = (0.5 + i*0.12) + 's';
@@ -2775,6 +2830,19 @@
         `<span class="marquee-item">${t}<span class="star">✦</span></span>`
       ).join('');
       track.innerHTML = html;
+    })();
+
+    /* ---------- Hero marquee (running strip inside hero) ---------- */
+    (function heroMarquee(){
+      const track = $('#heroMarqueeTrack');
+      if (!track) return;
+      const items = ['Developer','Designer','Cybersecurity','Creative Development','Code & Craft','Digital Experiences'];
+      const html = [...items, ...items, ...items].map(t =>
+        `<span class="hero-marquee-item">${t}<span class="star">✦</span></span>`
+      ).join('');
+      track.innerHTML = html;
+      // Reveal after hero loads
+      setTimeout(() => track.parentElement.classList.add('in'), 1200);
     })();
 
     /* ---------- Cursor "VIEW" state over project images ---------- */
